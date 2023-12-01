@@ -13,16 +13,13 @@ CREATE PROCEDURE AddEpisode(
     IN e_length REAL
 )
 BEGIN
-    -- Check if the series ID exists and the episode number does not exist for the given series and season
     IF EXISTS (SELECT 1 FROM series WHERE series_id = s_id) AND
        NOT EXISTS (SELECT 1 FROM episodes WHERE series_id = s_id AND season_number = s_number AND episode_number = e_number) THEN
-        -- Insert the new episode
         INSERT INTO episodes (series_id, season_number, episode_number, episode_title, episode_length, date_of_release)
         VALUES (s_id, s_number, e_number, e_title, e_length, CURDATE());
     ELSE
-        -- If conditions are not met, you can handle it here. For example:
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Error: Invalid series_id or episode already exists for the given series and season.';
+        SET MESSAGE_TEXT = 'Error: Invalid series_id/episode exists already';
     END IF;
 END;
 
